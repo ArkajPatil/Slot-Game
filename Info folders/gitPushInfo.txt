@@ -1,4 +1,22 @@
-3. 
+5. 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4. Created reel layout
+
+- Added three independent reel viewports.
+- Configured RectMask2D.
+- Added initial slot symbols.
+- Aligned reels with cabinet artwork.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3. Added slot machine cabinet
+
+- Imported slot machine cabinet artwork.
+- Added cabinet to SlotMachineArea.
+- Configured cabinet dimensions and scaling.
+- Positioned cabinet in the game scene.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
