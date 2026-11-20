@@ -1,4 +1,8 @@
-5. 
+5. Implemented basic reel spinning
+
+- Added ReelController sccript to manage reel movement.
+- Implemented continuous symbol-strip movement.
+- Added looping logic to maintain visual continuity during reel spinning.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
