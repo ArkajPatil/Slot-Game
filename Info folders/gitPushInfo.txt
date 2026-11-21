@@ -1,3 +1,27 @@
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+7. Implemented ReelsManager and all-reel spinning
+
+- Created ReelsManager to coordinate all three reels.
+- Connected individual ReelController components.
+- Implemented simultaneous reel spinning.
+- Added centralized spin-start audio feedback.
+- Established event-based communication for reel completion.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6. Added reel spinning mechanics and audio feedback
+
+- Implemented random reel result selection.
+- Added speed-based reel deceleration.
+- Added reel spin-start and symbol tick sounds.
+- Introduced OnReelSpinFinished event for result communication.
+- Improved ReelController functionality.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 5. Implemented basic reel spinning
 
 - Added ReelController sccript to manage reel movement.

@@ -1,31 +1,31 @@
-
 using UnityEngine;
 using System;
 
 public class ReelController : MonoBehaviour
 {
     [Header("Reel Settings")]
-    [SerializeField] private float spinSpeed = 2000f;
+    private float spinSpeed = 2000f;
     [SerializeField] private float loopDistance = 500f;
     
     private RectTransform symbols;
 
     private bool isSpinning = false;
-    private int spinnedIndex = -1;
-    private float loopOffset = 40f;
-    private float[] symbolPositions = {500.0f, 125.0f, 250.0f, 375.0f};
+    private int spinnedIndex = -1;       // stores info of result symbol
+    private float loopOffset = 40f;  
+    private float[] symbolPositions = {500.0f, 125.0f, 250.0f, 375.0f};       // this stores the positions of the symbols on the reel
     private float deceleration;
+
+    // for sounds
+    private int lastSlot;
 
     // result event
     public event Action<int> OnReelSpinFinished;
 
-        public AudioSource SpinStartSound ;
-        public AudioSource SpinTickSound ;
+    public AudioSource SpinTickSound ;
 
     private void Awake()
     {
         symbols = GetComponent<RectTransform>();
-        StartSpin();
     }
 
     private void Update()
@@ -38,7 +38,7 @@ public class ReelController : MonoBehaviour
 
     private void Spin()
     {
-        // Move the complete symbol strip upward.
+        // Move the complete symbol strip upward
         Vector2 position = symbols.anchoredPosition;
         position.y += spinSpeed * Time.deltaTime;
 
@@ -66,28 +66,30 @@ public class ReelController : MonoBehaviour
         }
         else 
         {
-            symbols.anchoredPosition += Vector2.down * 3.1f;
+            symbols.anchoredPosition += Vector2.down * 5.0f;
             StopSpin();
         }
 
 
     }
 
-private int lastSlot;
-
-
     public void StartSpin()
     {
+        if(isSpinning)  // if already spinning, then just exit
+        {
+            return;
+        }
+
         // chose random index
         int randomIndex = UnityEngine.Random.Range(0, 4);
         spinnedIndex = randomIndex;
         float targetPosition = symbolPositions[randomIndex];
 
         // calculate deceleration
-        deceleration = (2000*2000) / (2*(loopDistance*4 + targetPosition));
+        deceleration = (2000*2000) / (2*(loopDistance*10 + targetPosition));
 
+        // calling the Spin() function
         isSpinning = true;
-        SpinStartSound.Play();   // sound
     }
 
     private void StopSpin()
