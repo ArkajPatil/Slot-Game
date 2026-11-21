@@ -9,6 +9,13 @@ public class AnimationManager : MonoBehaviour
     public GameObject gameWonPanel;
     public GameObject gameLosePanel;
 
+    [Header("Buttons")]
+    public GameObject spinButton;
+    public GameObject resetReelsButton;
+
+    public GameObject lever;
+    public GameObject lever1;
+
     [Header("Panel Images (For Fading)")]
     public Image gameWonImage;
     public Image gameLoseImage;
@@ -53,7 +60,7 @@ public class AnimationManager : MonoBehaviour
         tempColor.a = 1f;
         targetImage.color = tempColor;
 
-        // 4. Gradually reduce alpha from 1 to 0 over 3.5 seconds
+        // Gradually reduce alpha from 1 to 0 over 3.5 seconds
         float elapsedTime = 0f;
         while (elapsedTime < fadeDuration)
         {
@@ -69,8 +76,22 @@ public class AnimationManager : MonoBehaviour
         tempColor.a = 0f;
         targetImage.color = tempColor;
 
-        // 5. Deactivate the Won/Lose panel and bring back the main Game Panel
+        // deactivate the Won/Lose panel and bring back the main Game Panel
         targetPanel.SetActive(false);
         gamePanel.SetActive(true);
+
+        // changing buttons
+        spinButton.SetActive(false);
+        resetReelsButton.SetActive(true);
+    }
+
+    public void ReelsReseted()
+    {
+        spinButton.SetActive(true);
+        resetReelsButton.SetActive(false);
+
+        
+        lever1.SetActive(false);
+        lever.SetActive(true);
     }
 }

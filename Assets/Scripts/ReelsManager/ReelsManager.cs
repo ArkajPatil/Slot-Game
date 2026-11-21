@@ -7,11 +7,12 @@ public class ReelsManager : MonoBehaviour
     [SerializeField] private ReelController[] reels;
 
     [Header("Spin Settings")]
-    // [SerializeField] private float stopDelay = 1.0f;
 
     private int[] reelResults;
-    private int completedReels = 0;
+    private int spinCompletedReels = 0;
+    private int resetCompletedReels = 0;
     private bool isSpinning = false;
+    private GameManager gameManager;
 
     // sounds
     public AudioSource SpinStartSound ;
@@ -25,9 +26,12 @@ public class ReelsManager : MonoBehaviour
         foreach (ReelController reel in reels)
         {
             reel.OnReelSpinFinished += OnReelFinished;
+            reel.OnResetReelFinished += OnResetReelFinished;
         }
 
-        StartSpin();
+        GameManager.OnSpinStarted += StartSpin;
+        
+
     }
 
     private void OnDestroy()
@@ -35,7 +39,36 @@ public class ReelsManager : MonoBehaviour
         foreach (ReelController reel in reels)
         {
             if (reel != null)
+            {
                 reel.OnReelSpinFinished -= OnReelFinished;
+                reel.OnResetReelFinished -= OnResetReelFinished;
+            }
+        }
+
+        GameManager.OnSpinStarted -= StartSpin;
+    }
+
+    private void OnReelFinished(int result)
+    {
+        reelResults[spinCompletedReels] = result;
+        spinCompletedReels++;
+    }
+
+    private void OnResetReelFinished()
+    {
+        resetCompletedReels++;
+
+        if(resetCompletedReels == 3)
+        {
+            animationManager.ReelsReseted();
+        }
+    }
+
+    private void Update()
+    {
+        if(spinCompletedReels == 3 && isSpinning)
+        {
+            SpinCompleted();
         }
     }
 
@@ -59,26 +92,10 @@ public class ReelsManager : MonoBehaviour
         isSpinning = true;
     }
 
-
-
-    private void OnReelFinished(int result)
-    {
-        reelResults[completedReels] = result;
-        completedReels++;
-    }
-
-    private void Update()
-    {
-        if(completedReels >= 3)
-        {
-            SpinCompleted();
-        }
-    }
-
     private void SpinCompleted()
     {
         isSpinning = false;
-        completedReels = 0;
+        spinCompletedReels = 0;
         
         // evaluating results
         if(ResultEvaluator.IsWinningCombination(reelResults))
@@ -88,6 +105,18 @@ public class ReelsManager : MonoBehaviour
         else
         {
             animationManager.ShowGameLoseAnimation();
+        }
+    }
+
+    public void ResetReels()
+    {
+        resetCompletedReels = 0;
+        foreach (ReelController reel in reels)
+        {
+            if (reel != null)
+            {
+                reel.ResetReel();
+            }
         }
     }
 }

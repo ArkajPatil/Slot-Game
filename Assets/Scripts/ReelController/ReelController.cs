@@ -14,12 +14,14 @@ public class ReelController : MonoBehaviour
     private float loopOffset = 40f;  
     private float[] symbolPositions = {500.0f, 125.0f, 250.0f, 375.0f};       // this stores the positions of the symbols on the reel
     private float deceleration;
+    bool bResetState = false;
 
     // for sounds
-    private int lastSlot;
+    private int lastSlot = 0;
 
     // result event
     public event Action<int> OnReelSpinFinished;
+    public event Action OnResetReelFinished;
 
     public AudioSource SpinTickSound ;
 
@@ -33,6 +35,11 @@ public class ReelController : MonoBehaviour
         if (isSpinning)
         {
             Spin();
+        }
+
+        if(bResetState)
+        {
+            SpinToOriginalPosition();
         }
     }
 
@@ -73,6 +80,39 @@ public class ReelController : MonoBehaviour
 
     }
 
+    private void SpinToOriginalPosition()
+    {
+        float resetSpinSpeed = 500.0f;
+        // Move the complete symbol strip upward
+        Vector2 position = symbols.anchoredPosition;
+        position.y += resetSpinSpeed * Time.deltaTime;
+
+        // Preserve movement even if a frame overshoots the loop point.
+        if(position.y >= loopDistance + loopOffset)
+        {
+            position.y -= loopDistance;
+        }
+
+        symbols.anchoredPosition = position;
+
+        //  tick sound - once each time a new symbol slot is pass
+        int slot = Mathf.FloorToInt((position.y - loopOffset) / 125f);
+        if (slot != lastSlot)
+        {
+            lastSlot = slot;
+            SpinTickSound.PlayOneShot(SpinTickSound.clip, 0.4f);
+        }
+
+        if(Mathf.Abs(symbols.anchoredPosition.y - 500.0f) <= 10.0f )   // 500 is initial position of reel
+        {
+            position.y = 500.0f;
+            symbols.anchoredPosition = position;  
+            bResetState = false;
+            OnResetReelFinished?.Invoke();
+        }
+        
+    }
+
     public void StartSpin()
     {
         if(isSpinning)  // if already spinning, then just exit
@@ -98,5 +138,13 @@ public class ReelController : MonoBehaviour
         isSpinning = false;
 
         OnReelSpinFinished?.Invoke(spinnedIndex);
+    }
+
+    public void ResetReel()
+    {
+        bResetState = true;
+        spinnedIndex = -1;
+        spinSpeed = 2000.0f;
+        deceleration = 0.0f;
     }
 }
