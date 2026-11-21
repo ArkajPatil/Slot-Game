@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-
 public class ReelsManager : MonoBehaviour
 {
     [Header("Reel References")]
@@ -11,10 +10,13 @@ public class ReelsManager : MonoBehaviour
     // [SerializeField] private float stopDelay = 1.0f;
 
     private int[] reelResults;
-    // private int completedReels;
+    private int completedReels = 0;
+    private bool isSpinning = false;
 
     // sounds
     public AudioSource SpinStartSound ;
+
+    [SerializeField] private AnimationManager animationManager;
 
     private void Awake()
     {
@@ -53,18 +55,39 @@ public class ReelsManager : MonoBehaviour
                 reel.StartSpin();
             }
         }
+
+        isSpinning = true;
     }
 
 
 
     private void OnReelFinished(int result)
     {
-        // int index = System.Array.IndexOf(reels, reel);
+        reelResults[completedReels] = result;
+        completedReels++;
+    }
 
-        // if (index < 0)
-        //     return;
+    private void Update()
+    {
+        if(completedReels >= 3)
+        {
+            SpinCompleted();
+        }
+    }
 
-        // reelResults[index] = result;
-        // completedReels++;
+    private void SpinCompleted()
+    {
+        isSpinning = false;
+        completedReels = 0;
+        
+        // evaluating results
+        if(ResultEvaluator.IsWinningCombination(reelResults))
+        {
+            animationManager.ShowGameWonAnimation();
+        }
+        else
+        {
+            animationManager.ShowGameLoseAnimation();
+        }
     }
 }
